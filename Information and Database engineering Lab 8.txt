@@ -1,0 +1,38 @@
+Lab 8
+
+1.)
+A)
+//// Grant SELECT permission on your Deposit table to another student.
+Ask the other student to test this grant statement by selecting Deposit
+data from your table (to look at another user’s tables the username
+must prefix the table name e.g. N001234.Deposit) ////
+
+GRANT SELECT ON Deposit TO N0569351;
+
+B)
+//// Revoke the SELECT permission on your Deposit table from the other
+student. Ask the other student to test this revoke statement by
+attempting to select data from your Deposit table again. ////
+
+REVOKE SELECT ON Deposit FROM N0569351;
+
+
+
+C)
+//// Create a view of the customerName and BranchName columns from
+table deposit for the customers with balances greater than 400. Grant
+SELECT permission on this view to another student. Ask the other
+student to test this grant statement by selecting data from your view. ////
+
+CREATE VIEW cBranch_view
+SELECT customerName, branchName
+FROM Deposit
+WHERE balance > 400;
+
+GRANT SELECT ON cBranch_view TO N0569351;
+
+D) //// Revoke the SELECT permission on your view. Ask the other student
+to test this revoke statement by attempting to select data from your
+view again. ////
+
+REVOKE SELECT ON cBranch_view FROM N0569351;
