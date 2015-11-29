@@ -1,4 +1,241 @@
-Lab 8
+INFO AND DATABASE ENGINEERING SQL COMMANDS
+
+///// CREATE TABLES IN DATABASE /////
+
+CREATE TABLE Branch (
+branchName VARCHAR(20) PRIMARY KEY,
+Assets DECIMAL(10,2) DEFAULT 0.00,
+branchCity VARCHAR(20)
+);
+
+CREATE TABLE Customer (
+customerName VARCHAR(20) PRIMARY KEY,
+street VARCHAR(20),
+customerCity VARCHAR(20)
+);
+
+ALTER TABLE Deposit DROP CONSTRAINT DepToCust;
+ALTER TABLE Deposit ADD CONSTRAINT DepToCust FOREIGN KEY
+(customerName) REFERENCES Customer(customerName) ON DELETE
+CASCADE;
+CREATE TABLE Deposit (
+customerName VARCHAR(20) CONSTRAINT DepToCust REFERENCES
+Customer(customerName) ON DELETE CASCADE,
+branchName VARCHAR(20) CONSTRAINT DepToBr REFERENCES
+Branch(branchName) ON DELETE CASCADE,
+accountNumber INTEGER PRIMARY KEY,
+balance DECIMAL(10,2) DEFAULT 0.00
+) ;
+
+CREATE TABLE Loan (
+customerName VARCHAR(20) CONSTRAINT BorToCust REFERENCES
+Customer(customerName) ON DELETE CASCADE,
+branchName VARCHAR(20) CONSTRAINT BorToBr REFERENCES
+Branch(branchName) ON DELETE CASCADE,
+loanNumber INTEGER PRIMARY KEY,
+amount DECIMAL(10,2) DEFAULT 0.00
+) ;
+
+///// END OF CREATE TABLES IN DATABASE /////
+
+///// INSERT DATA INTO TABLES /////
+
+BRANCH:
+
+INSERT INTO Branch (branchName, assets, branchCity) VALUES
+('Midlands',20000,'Nottingham')
+('RoyalBank',25000,'Nottingham')
+('HFE',15000,'Derby')
+('Southern',30000,'Derby')
+('Yorkshire',10000,'Nottingham');
+
+
+CUSTOMER:
+
+INSERT INTO Customer (customerName, street, customerCity) VALUES
+('Chan','Victoria','Nottingham');
+('Jones','Victoria','Nottingham')
+('Patel','Church','Nottingham');
+('Smith','Derby','Leicester');
+('Ahmed','Church','Derby');
+('Braun','Alfred','Derby');
+
+DEPOSIT:
+
+INSERT INTO Deposit (customerName, branchName, accountNumber, balance) VALUES
+('Jones', 'HFE', 42, 4100);
+('Braun', 'Southern', 41, 2000);
+('Patel', 'Midlands', 22, 70);
+('Patel', 'RoyalBank', 31, 450);
+('Smith', 'Midlands', 21, 600);
+('Ahmed', 'RoyalBank', 30, 480);
+('Braun', 'Midlands', 20, 150);
+('Jones', 'Yorkshire', 1, 100);
+
+LOAN;
+
+INSERT INTO Loan (customerName, branchName, loanNumber, amount) VALUES
+('Jones', 'Midlands', 61, 2000);
+('Jones', 'Yorkshire', 11, 3000);
+('Chan', 'Yorkshire', 12, 2500);
+('Ahmed', 'Yorkshire', 13, 1800);
+('Smith', 'Midlands', 50, 5000);
+('Patel', 'Midlands', 51, 1000);
+('Smith', 'RoyalBank',6, 500);
+
+////////////////////////////////////////////////////////////////////////////// LAB 2 - SELECT STATEMENTS ////////////////////////////////////////////////////////////////////
+
+1.
+
+( SELECT CustomerName
+FROM Deposit
+WHERE BranchName = 'Midlands' )
+UNION
+( SELECT CustomerName
+FROM Loan
+WHERE BranchName = 'Midlands' );
+
+2.
+
+SELECT branchName, Customer.customerName FROM Customer, Loan
+WHERE CustomerCity='Nottingham'
+AND Customer.customerName = Loan.customerName;
+
+3.
+
+SELECT Loan.customerName, amount, balance
+FROM Loan LEFT JOIN Deposit ON Deposit.customerName=Loan.customerName
+WHERE Loan.branchName='Yorkshire';
+
+4.
+
+SELECT t.CustomerName
+FROM Loan t, Loan s
+WHERE s.CustomerName = 'Smith'
+AND s.BranchName = t.BranchName
+AND t.CustomerName <> 'Smith' ;
+
+5.
+
+SELECT MAX(balance), MIN(balance), AVG(balance) FROM Deposit
+WHERE branchName='Midlands';
+
+////////////////////////////////////////////////////////////////////////////// LAB 3 - SUBQUERIES AND VIEWS ////////////////////////////////////////////////////////////////////
+
+1.
+
+SELECT branchName, SUM(balance) FROM Deposit
+GROUP BY branchName;
+
+2.
+
+SELECT branchName, count(*) AS NoOfDeposits
+FROM Deposit
+GROUP BY branchName
+HAVING count(*) > 1;
+
+3.
+
+SELECT customerName FROM Deposit d, Branch b
+WHERE branchCity = 'Nottingham' AND d.branchName = b.branchName;
+SELECT customerName FROM Deposit
+WHERE branchName IN (SELECT branchName FROM Branch WHERE branchCity = 'Nottingham');
+
+4.
+
+SELECT customerName FROM Deposit
+WHERE balance >= ALL (SELECT balance FROM Deposit);
+
+5.
+
+CREATE View customerDetails AS
+SELECT Deposit.customerName, customerCity, Deposit.branchName,branchCity FROM Deposit, Branch,
+Customer
+WHERE Deposit.branchName = Branch.branchName AND Deposit.customerName =Customer.customerName;
+SELECT * FROM customerDetails;
+
+
+////////////////////////////////////////////////////////////////////////////// LAB 6 - INTRODUCTION TO DBSM ////////////////////////////////////////////////////////////////////
+
+1.
+a)
+
+UPDATE Branch
+SET branchName = 'Royal'
+WHERE branchName = 'RoyalBank';
+
+WHAT HAPPENS: NOTHING
+SUCCESSFUL?: NO
+ERROR?: YES - Integrity Constraint violated - child record found
+EFFECT ON Branch and Deposit: NONE
+
+b)
+
+UPDATE Deposit
+SET branchName = 'Royal'
+WHERE branchName = 'RoyalBank';
+
+WHAT HAPPENS: NOTHING
+SUCCESSFUL?: NO
+ERROR?: YES - Integrity constraint violated - parent key not found
+EFFECT ON Branch and Deposit: NONE
+
+c)
+
+UPDATE Deposit
+SET branchName = 'HFE'
+WHERE branchName = 'RoyalBank';
+
+WHAT HAPPENS: Deposit updated
+SUCCESSFUL?: YES
+ERROR?: NO
+EFFECT ON Branch and Deposit: Rows in Deposit with branchName RoyalBank are changed to HFE.
+
+d)
+
+DELETE FROM Branch
+WHERE branchName = 'RoyalBank';
+
+WHAT HAPPENS: Row deleted
+SUCCESSFUL?: YES
+ERROR?: NO
+EFFECT ON Branch and Deposit: Row from Deposit containing branchName RoyalBank deleted.
+
+e)
+
+DELETE FROM Deposit
+WHERE branchName = 'RoyalBank';
+
+WHAT HAPPENS: Nothing
+SUCCESSFUL?: YES
+ERROR?: NO
+EFFECT ON Branch and Deposit: None because rows containing branchName RoyalBank have already been changed to HFE.
+After rollback - two rows containing RoyalBank are deleted.rollback;
+
+////////////////////////////////////////////////////////////////////////////// LAB 7 - INDEXES, DATE TYPE AND FORMATTING OUTPUT ////////////////////////////////////////////////////////////////////
+
+1) Add an index to the balance column in table Deposit. (You can use ALTER
+TABLE….ADD INDEX….. or CREATE INDEX…).
+(The index allows faster access to the values in these columns.)
+
+CREATE INDEX balance_Index
+ON Deposit (balance);
+
+2. Add two more columns to tables Deposit and Loan that will store:
+a. The date (and time) an account or loan was started.
+- Use the data type DATE for Oracle.
+- Use a default value for the start date column to automatically
+give the start date a value of the current date and time – i.e.
+use the SYSDATE function for the default.
+
+ALTER TABLE Deposit
+ADD "Date" Date;
+
+INSERT INTO Deposit (Date)
+VALUES ('20151116');
+
+
+////////////////////////////////////////////////////////////////////////////// LAB 8 - PERMISSIONS, GRANTS AND REVOKE////////////////////////////////////////////////////////////////////
 
 1.)
 A)
