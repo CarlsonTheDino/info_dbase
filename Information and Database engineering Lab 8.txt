@@ -228,11 +228,23 @@ a. The date (and time) an account or loan was started.
 give the start date a value of the current date and time – i.e.
 use the SYSDATE function for the default.
 
-ALTER TABLE Deposit
-ADD "Date" Date;
-
-INSERT INTO Deposit (Date)
-VALUES ('20151116');
+ALTER TABLE Deposit ADD creationDate DATE DEFAULT SYSDATE;
+ALTER TABLE Loan ADD creationDate DATE DEFAULT SYSDATE;
+ALTER TABLE Deposit ADD modificationDate DATE;
+ALTER TABLE Loan ADD modificationDate DATE;
+CREATE OR REPLACE TRIGGER setModificationDateDeposit
+BEFORE UPDATE ON Deposit
+FOR EACH ROW
+BEGIN
+:new.modificationDate := SYSDATE;
+END;
+/
+CREATE OR REPLACE TRIGGER setModificationDateLoan
+BEFORE UPDATE ON Loan
+FOR EACH ROW
+BEGIN
+:new.modificationDate := SYSDATE;
+END;
 
 
 ////////////////////////////////////////////////////////////////////////////// LAB 8 - PERMISSIONS, GRANTS AND REVOKE////////////////////////////////////////////////////////////////////
