@@ -290,4 +290,14 @@ REVOKE SELECT ON cBranch_view FROM N0569351;
 1. Add 10% interest to each customer balance in the deposit table for customers
    with branch name 'RoyalBank'.:
 
-   SELECT balance
+   UPDATE Deposit
+   SET balance = balance * 1.1
+   WHERE branchName = 'RoyalBank';
+
+2. Interest charges are going to be made on the amounts of some customer loans.
+   If a customer has one or more deposits with the branch it has a loan with, that
+   branch wants to add interest at 2% of the loan amount. Update the loan
+   amounts using one SQL command.
+
+
+  UPDATE Loan, Deposit
