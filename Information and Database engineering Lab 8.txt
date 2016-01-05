@@ -1,313 +1,313 @@
-﻿INFO AND DATABASE ENGINEERING SQL COMMANDS
-
-///// CREATE TABLES IN DATABASE /////
-
-CREATE TABLE Branch (
-branchName VARCHAR(20) PRIMARY KEY,
-Assets DECIMAL(10,2) DEFAULT 0.00,
-branchCity VARCHAR(20)
-);
-
-CREATE TABLE Customer (
-customerName VARCHAR(20) PRIMARY KEY,
-street VARCHAR(20),
-customerCity VARCHAR(20)
-);
-
-ALTER TABLE Deposit DROP CONSTRAINT DepToCust;
-ALTER TABLE Deposit ADD CONSTRAINT DepToCust FOREIGN KEY
-(customerName) REFERENCES Customer(customerName) ON DELETE
-CASCADE;
-CREATE TABLE Deposit (
-customerName VARCHAR(20) CONSTRAINT DepToCust REFERENCES
-Customer(customerName) ON DELETE CASCADE,
-branchName VARCHAR(20) CONSTRAINT DepToBr REFERENCES
-Branch(branchName) ON DELETE CASCADE,
-accountNumber INTEGER PRIMARY KEY,
-balance DECIMAL(10,2) DEFAULT 0.00
-) ;
-
-CREATE TABLE Loan (
-customerName VARCHAR(20) CONSTRAINT BorToCust REFERENCES
-Customer(customerName) ON DELETE CASCADE,
-branchName VARCHAR(20) CONSTRAINT BorToBr REFERENCES
-Branch(branchName) ON DELETE CASCADE,
-loanNumber INTEGER PRIMARY KEY,
-amount DECIMAL(10,2) DEFAULT 0.00
-) ;
-
-///// END OF CREATE TABLES IN DATABASE /////
-
-///// INSERT DATA INTO TABLES /////
-
-BRANCH:
-
-INSERT INTO Branch (branchName, assets, branchCity) VALUES
-('Midlands',20000,'Nottingham')
-('RoyalBank',25000,'Nottingham')
-('HFE',15000,'Derby')
-('Southern',30000,'Derby')
-('Yorkshire',10000,'Nottingham');
+  ﻿INFO AND DATABASE ENGINEERING SQL COMMANDS
+
+  ///// CREATE TABLES IN DATABASE /////
+
+  CREATE TABLE Branch (
+  branchName VARCHAR(20) PRIMARY KEY,
+  Assets DECIMAL(10,2) DEFAULT 0.00,
+  branchCity VARCHAR(20)
+  );
+
+  CREATE TABLE Customer (
+  customerName VARCHAR(20) PRIMARY KEY,
+  street VARCHAR(20),
+  customerCity VARCHAR(20)
+  );
+
+  ALTER TABLE Deposit DROP CONSTRAINT DepToCust;
+  ALTER TABLE Deposit ADD CONSTRAINT DepToCust FOREIGN KEY
+  (customerName) REFERENCES Customer(customerName) ON DELETE
+  CASCADE;
+  CREATE TABLE Deposit (
+  customerName VARCHAR(20) CONSTRAINT DepToCust REFERENCES
+  Customer(customerName) ON DELETE CASCADE,
+  branchName VARCHAR(20) CONSTRAINT DepToBr REFERENCES
+  Branch(branchName) ON DELETE CASCADE,
+  accountNumber INTEGER PRIMARY KEY,
+  balance DECIMAL(10,2) DEFAULT 0.00
+  ) ;
+
+  CREATE TABLE Loan (
+  customerName VARCHAR(20) CONSTRAINT BorToCust REFERENCES
+  Customer(customerName) ON DELETE CASCADE,
+  branchName VARCHAR(20) CONSTRAINT BorToBr REFERENCES
+  Branch(branchName) ON DELETE CASCADE,
+  loanNumber INTEGER PRIMARY KEY,
+  amount DECIMAL(10,2) DEFAULT 0.00
+  ) ;
+
+  ///// END OF CREATE TABLES IN DATABASE /////
+
+  ///// INSERT DATA INTO TABLES /////
+
+  BRANCH:
+
+  INSERT INTO Branch (branchName, assets, branchCity) VALUES
+  ('Midlands',20000,'Nottingham')
+  ('RoyalBank',25000,'Nottingham')
+  ('HFE',15000,'Derby')
+  ('Southern',30000,'Derby')
+  ('Yorkshire',10000,'Nottingham');
 
 
-CUSTOMER:
-
-INSERT INTO Customer (customerName, street, customerCity) VALUES
-('Chan','Victoria','Nottingham');
-('Jones','Victoria','Nottingham')
-('Patel','Church','Nottingham');
-('Smith','Derby','Leicester');
-('Ahmed','Church','Derby');
-('Braun','Alfred','Derby');
+  CUSTOMER:
+
+  INSERT INTO Customer (customerName, street, customerCity) VALUES
+  ('Chan','Victoria','Nottingham');
+  ('Jones','Victoria','Nottingham')
+  ('Patel','Church','Nottingham');
+  ('Smith','Derby','Leicester');
+  ('Ahmed','Church','Derby');
+  ('Braun','Alfred','Derby');
 
-DEPOSIT:
+  DEPOSIT:
 
-INSERT INTO Deposit (customerName, branchName, accountNumber, balance) VALUES
-('Jones', 'HFE', 42, 4100);
-('Braun', 'Southern', 41, 2000);
-('Patel', 'Midlands', 22, 70);
-('Patel', 'RoyalBank', 31, 450);
-('Smith', 'Midlands', 21, 600);
-('Ahmed', 'RoyalBank', 30, 480);
-('Braun', 'Midlands', 20, 150);
-('Jones', 'Yorkshire', 1, 100);
+  INSERT INTO Deposit (customerName, branchName, accountNumber, balance) VALUES
+  ('Jones', 'HFE', 42, 4100);
+  ('Braun', 'Southern', 41, 2000);
+  ('Patel', 'Midlands', 22, 70);
+  ('Patel', 'RoyalBank', 31, 450);
+  ('Smith', 'Midlands', 21, 600);
+  ('Ahmed', 'RoyalBank', 30, 480);
+  ('Braun', 'Midlands', 20, 150);
+  ('Jones', 'Yorkshire', 1, 100);
 
-LOAN;
+  LOAN;
 
-INSERT INTO Loan (customerName, branchName, loanNumber, amount) VALUES
-('Jones', 'Midlands', 61, 2000);
-('Jones', 'Yorkshire', 11, 3000);
-('Chan', 'Yorkshire', 12, 2500);
-('Ahmed', 'Yorkshire', 13, 1800);
-('Smith', 'Midlands', 50, 5000);
-('Patel', 'Midlands', 51, 1000);
-('Smith', 'RoyalBank',6, 500);
+  INSERT INTO Loan (customerName, branchName, loanNumber, amount) VALUES
+  ('Jones', 'Midlands', 61, 2000);
+  ('Jones', 'Yorkshire', 11, 3000);
+  ('Chan', 'Yorkshire', 12, 2500);
+  ('Ahmed', 'Yorkshire', 13, 1800);
+  ('Smith', 'Midlands', 50, 5000);
+  ('Patel', 'Midlands', 51, 1000);
+  ('Smith', 'RoyalBank',6, 500);
 
-////////////////////////////////////////////////////////////////////////////// LAB 2 - Select Statements /////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////// LAB 2 - Select Statements /////////////////////////////////////////////////////////////
 
-1.
+  1.
 
-( SELECT CustomerName
-FROM Deposit
-WHERE BranchName = 'Midlands' )
-UNION
-( SELECT CustomerName
-FROM Loan
-WHERE BranchName = 'Midlands' );
+  ( SELECT CustomerName
+  FROM Deposit
+  WHERE BranchName = 'Midlands' )
+  UNION
+  ( SELECT CustomerName
+  FROM Loan
+  WHERE BranchName = 'Midlands' );
 
-2.
+  2.
 
-SELECT branchName, Customer.customerName FROM Customer, Loan
-WHERE CustomerCity='Nottingham'
-AND Customer.customerName = Loan.customerName;
+  SELECT branchName, Customer.customerName FROM Customer, Loan
+  WHERE CustomerCity='Nottingham'
+  AND Customer.customerName = Loan.customerName;
 
-3.
+  3.
 
-SELECT Loan.customerName, amount, balance
-FROM Loan LEFT JOIN Deposit ON Deposit.customerName=Loan.customerName
-WHERE Loan.branchName='Yorkshire';
+  SELECT Loan.customerName, amount, balance
+  FROM Loan LEFT JOIN Deposit ON Deposit.customerName=Loan.customerName
+  WHERE Loan.branchName='Yorkshire';
 
-4.
+  4.
 
-SELECT t.CustomerName
-FROM Loan t, Loan s
-WHERE s.CustomerName = 'Smith'
-AND s.BranchName = t.BranchName
-AND t.CustomerName <> 'Smith' ;
+  SELECT t.CustomerName
+  FROM Loan t, Loan s
+  WHERE s.CustomerName = 'Smith'
+  AND s.BranchName = t.BranchName
+  AND t.CustomerName <> 'Smith' ;
 
-5.
+  5.
 
-SELECT MAX(balance), MIN(balance), AVG(balance) FROM Deposit
-WHERE branchName='Midlands';
+  SELECT MAX(balance), MIN(balance), AVG(balance) FROM Deposit
+  WHERE branchName='Midlands';
 
-////////////////////////////////////////////////////////////////////////////// LAB 3 - Subqueries and Views //////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////// LAB 3 - Subqueries and Views //////////////////////////////////////////////////////////
 
-1.
+  1.
 
-SELECT branchName, SUM(balance) FROM Deposit
-GROUP BY branchName;
+  SELECT branchName, SUM(balance) FROM Deposit
+  GROUP BY branchName;
 
-2.
+  2.
 
-SELECT branchName, count(*) AS NoOfDeposits
-FROM Deposit
-GROUP BY branchName
-HAVING count(*) > 1;
+  SELECT branchName, count(*) AS NoOfDeposits
+  FROM Deposit
+  GROUP BY branchName
+  HAVING count(*) > 1;
 
-3.
+  3.
 
-SELECT customerName FROM Deposit d, Branch b
-WHERE branchCity = 'Nottingham' AND d.branchName = b.branchName;
-SELECT customerName FROM Deposit
-WHERE branchName IN (SELECT branchName FROM Branch WHERE branchCity = 'Nottingham');
+  SELECT customerName FROM Deposit d, Branch b
+  WHERE branchCity = 'Nottingham' AND d.branchName = b.branchName;
+  SELECT customerName FROM Deposit
+  WHERE branchName IN (SELECT branchName FROM Branch WHERE branchCity = 'Nottingham');
 
-4.
+  4.
 
-SELECT customerName FROM Deposit
-WHERE balance >= ALL (SELECT balance FROM Deposit);
+  SELECT customerName FROM Deposit
+  WHERE balance >= ALL (SELECT balance FROM Deposit);
 
-5.
+  5.
 
-CREATE View customerDetails AS
-SELECT Deposit.customerName, customerCity, Deposit.branchName,branchCity FROM Deposit, Branch,
-Customer
-WHERE Deposit.branchName = Branch.branchName AND Deposit.customerName =Customer.customerName;
-SELECT * FROM customerDetails;
+  CREATE View customerDetails AS
+  SELECT Deposit.customerName, customerCity, Deposit.branchName,branchCity FROM Deposit, Branch,
+  Customer
+  WHERE Deposit.branchName = Branch.branchName AND Deposit.customerName =Customer.customerName;
+  SELECT * FROM customerDetails;
 
-////////////////////////////////////////////////////////////////////////////// LAB 4 - Advanced SQL 1 //////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////// LAB 4 - Advanced SQL 1 //////////////////////////////////////////////////////////
 
 
 
 
 
-////////////////////////////////////////////////////////////////////////////// LAB 5 - Advanced SQL 2 //////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////// LAB 5 - Advanced SQL 2 //////////////////////////////////////////////////////////
 
 
 
 
-////////////////////////////////////////////////////////////////////////////// LAB 6 - Introduction to DBSM //////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////// LAB 6 - Introduction to DBSM //////////////////////////////////////////////////////////
 
-1.
-a)
+  1.
+  a)
 
-UPDATE Branch
-SET branchName = 'Royal'
-WHERE branchName = 'RoyalBank';
+  UPDATE Branch
+  SET branchName = 'Royal'
+  WHERE branchName = 'RoyalBank';
 
-WHAT HAPPENS: NOTHING
-SUCCESSFUL?: NO
-ERROR?: YES - Integrity Constraint violated - child record found
-EFFECT ON Branch and Deposit: NONE
+  WHAT HAPPENS: NOTHING
+  SUCCESSFUL?: NO
+  ERROR?: YES - Integrity Constraint violated - child record found
+  EFFECT ON Branch and Deposit: NONE
 
-b)
+  b)
 
-UPDATE Deposit
-SET branchName = 'Royal'
-WHERE branchName = 'RoyalBank';
+  UPDATE Deposit
+  SET branchName = 'Royal'
+  WHERE branchName = 'RoyalBank';
 
-WHAT HAPPENS: NOTHING
-SUCCESSFUL?: NO
-ERROR?: YES - Integrity constraint violated - parent key not found
-EFFECT ON Branch and Deposit: NONE
+  WHAT HAPPENS: NOTHING
+  SUCCESSFUL?: NO
+  ERROR?: YES - Integrity constraint violated - parent key not found
+  EFFECT ON Branch and Deposit: NONE
 
-c)
+  c)
 
-UPDATE Deposit
-SET branchName = 'HFE'
-WHERE branchName = 'RoyalBank';
+  UPDATE Deposit
+  SET branchName = 'HFE'
+  WHERE branchName = 'RoyalBank';
 
-WHAT HAPPENS: Deposit updated
-SUCCESSFUL?: YES
-ERROR?: NO
-EFFECT ON Branch and Deposit: Rows in Deposit with branchName RoyalBank are changed to HFE.
+  WHAT HAPPENS: Deposit updated
+  SUCCESSFUL?: YES
+  ERROR?: NO
+  EFFECT ON Branch and Deposit: Rows in Deposit with branchName RoyalBank are changed to HFE.
 
-d)
+  d)
 
-DELETE FROM Branch
-WHERE branchName = 'RoyalBank';
+  DELETE FROM Branch
+  WHERE branchName = 'RoyalBank';
 
-WHAT HAPPENS: Row deleted
-SUCCESSFUL?: YES
-ERROR?: NO
-EFFECT ON Branch and Deposit: Row from Deposit containing branchName RoyalBank deleted.
+  WHAT HAPPENS: Row deleted
+  SUCCESSFUL?: YES
+  ERROR?: NO
+  EFFECT ON Branch and Deposit: Row from Deposit containing branchName RoyalBank deleted.
 
-e)
+  e)
 
-DELETE FROM Deposit
-WHERE branchName = 'RoyalBank';
+  DELETE FROM Deposit
+  WHERE branchName = 'RoyalBank';
 
-WHAT HAPPENS: Nothing
-SUCCESSFUL?: YES
-ERROR?: NO
-EFFECT ON Branch and Deposit: None because rows containing branchName RoyalBank have already been changed to HFE.
-After rollback - two rows containing RoyalBank are deleted.rollback;
+  WHAT HAPPENS: Nothing
+  SUCCESSFUL?: YES
+  ERROR?: NO
+  EFFECT ON Branch and Deposit: None because rows containing branchName RoyalBank have already been changed to HFE.
+  After rollback - two rows containing RoyalBank are deleted.rollback;
 
-////////////////////////////////////////////////////////////////////////////// LAB 7 - Indexes, Date Type and Formatting Output //////////////////////////////////////
-1) Add an index to the balance column in table Deposit. (You can use ALTER
-TABLE….ADD INDEX….. or CREATE INDEX…).
-(The index allows faster access to the values in these columns.)
+  ////////////////////////////////////////////////////////////////////////////// LAB 7 - Indexes, Date Type and Formatting Output //////////////////////////////////////
+  1) Add an index to the balance column in table Deposit. (You can use ALTER
+  TABLE….ADD INDEX….. or CREATE INDEX…).
+  (The index allows faster access to the values in these columns.)
 
-CREATE INDEX balance_Index
-ON Deposit (balance);
+  CREATE INDEX balance_Index
+  ON Deposit (balance);
 
-2. Add two more columns to tables Deposit and Loan that will store:
-a. The date (and time) an account or loan was started.
-- Use the data type DATE for Oracle.
-- Use a default value for the start date column to automatically
-give the start date a value of the current date and time – i.e.
-use the SYSDATE function for the default.
+  2. Add two more columns to tables Deposit and Loan that will store:
+  a. The date (and time) an account or loan was started.
+  - Use the data type DATE for Oracle.
+  - Use a default value for the start date column to automatically
+  give the start date a value of the current date and time – i.e.
+  use the SYSDATE function for the default.
 
-ALTER TABLE Deposit ADD creationDate DATE DEFAULT SYSDATE;
-ALTER TABLE Loan ADD creationDate DATE DEFAULT SYSDATE;
-ALTER TABLE Deposit ADD modificationDate DATE;
-ALTER TABLE Loan ADD modificationDate DATE;
-CREATE OR REPLACE TRIGGER setModificationDateDeposit
-BEFORE UPDATE ON Deposit
-FOR EACH ROW
-BEGIN
-:new.modificationDate := SYSDATE;
-END;
-/
-CREATE OR REPLACE TRIGGER setModificationDateLoan
-BEFORE UPDATE ON Loan
-FOR EACH ROW
-BEGIN
-:new.modificationDate := SYSDATE;
-END;
+  ALTER TABLE Deposit ADD creationDate DATE DEFAULT SYSDATE;
+  ALTER TABLE Loan ADD creationDate DATE DEFAULT SYSDATE;
+  ALTER TABLE Deposit ADD modificationDate DATE;
+  ALTER TABLE Loan ADD modificationDate DATE;
+  CREATE OR REPLACE TRIGGER setModificationDateDeposit
+  BEFORE UPDATE ON Deposit
+  FOR EACH ROW
+  BEGIN
+  :new.modificationDate := SYSDATE;
+  END;
+  /
+  CREATE OR REPLACE TRIGGER setModificationDateLoan
+  BEFORE UPDATE ON Loan
+  FOR EACH ROW
+  BEGIN
+  :new.modificationDate := SYSDATE;
+  END;
 
 
-////////////////////////////////////////////////////////////////////////////// LAB 8 - Permissions; Grant and Revoke /////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////// LAB 8 - Permissions; Grant and Revoke /////////////////////////////////////////////////
 
-1.)
-A)
-//// Grant SELECT permission on your Deposit table to another student.
-Ask the other student to test this grant statement by selecting Deposit
-data from your table (to look at another user’s tables the username
-must prefix the table name e.g. N001234.Deposit) ////
+  1.)
+  A)
+  //// Grant SELECT permission on your Deposit table to another student.
+  Ask the other student to test this grant statement by selecting Deposit
+  data from your table (to look at another user’s tables the username
+  must prefix the table name e.g. N001234.Deposit) ////
 
-GRANT SELECT ON Deposit TO N0569351;
+  GRANT SELECT ON Deposit TO N0569351;
 
-B)
-//// Revoke the SELECT permission on your Deposit table from the other
-student. Ask the other student to test this revoke statement by
-attempting to select data from your Deposit table again. ////
+  B)
+  //// Revoke the SELECT permission on your Deposit table from the other
+  student. Ask the other student to test this revoke statement by
+  attempting to select data from your Deposit table again. ////
 
-REVOKE SELECT ON Deposit FROM N0569351;
+  REVOKE SELECT ON Deposit FROM N0569351;
 
 
 
-C)
-//// Create a view of the customerName and BranchName columns from
-table deposit for the customers with balances greater than 400. Grant
-SELECT permission on this view to another student. Ask the other
-student to test this grant statement by selecting data from your view. ////
+  C)
+  //// Create a view of the customerName and BranchName columns from
+  table deposit for the customers with balances greater than 400. Grant
+  SELECT permission on this view to another student. Ask the other
+  student to test this grant statement by selecting data from your view. ////
 
-CREATE VIEW cBranch_view
-SELECT customerName, branchName
-FROM Deposit
-WHERE balance > 400;
+  CREATE VIEW cBranch_view
+  SELECT customerName, branchName
+  FROM Deposit
+  WHERE balance > 400;
 
-GRANT SELECT ON cBranch_view TO N0569351;
+  GRANT SELECT ON cBranch_view TO N0569351;
 
-D) //// Revoke the SELECT permission on your view. Ask the other student
-to test this revoke statement by attempting to select data from your
-view again. ////
+  D) //// Revoke the SELECT permission on your view. Ask the other student
+  to test this revoke statement by attempting to select data from your
+  view again. ////
 
-REVOKE SELECT ON cBranch_view FROM N0569351;
+  REVOKE SELECT ON cBranch_view FROM N0569351;
 
-////////////////////////////////////////////////////////////////////////////// LAB 9 - Transaction, Recovery ////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////// LAB 9 - Transaction, Recovery ////////////////////////////////////////////////////////
 
-1. Add 10% interest to each customer balance in the deposit table for customers
-   with branch name 'RoyalBank'.:
+  1. Add 10% interest to each customer balance in the deposit table for customers
+     with branch name 'RoyalBank'.:
 
-   UPDATE Deposit
-   SET balance = balance * 1.1
-   WHERE branchName = 'RoyalBank';
+     UPDATE Deposit
+     SET balance = balance * 1.1
+     WHERE branchName = 'RoyalBank';
 
-2. Interest charges are going to be made on the amounts of some customer loans.
-   If a customer has one or more deposits with the branch it has a loan with, that
-   branch wants to add interest at 2% of the loan amount. Update the loan
-   amounts using one SQL command.
+  2. Interest charges are going to be made on the amounts of some customer loans.
+     If a customer has one or more deposits with the branch it has a loan with, that
+     branch wants to add interest at 2% of the loan amount. Update the loan
+     amounts using one SQL command.
 
 
-  UPDATE Loan, Deposit
+    UPDATE Loan, Deposit
