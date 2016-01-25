@@ -18,6 +18,7 @@
   ALTER TABLE Deposit ADD CONSTRAINT DepToCust FOREIGN KEY
   (customerName) REFERENCES Customer(customerName) ON DELETE
   CASCADE;
+  
   CREATE TABLE Deposit (
   customerName VARCHAR(20) CONSTRAINT DepToCust REFERENCES
   Customer(customerName) ON DELETE CASCADE,
